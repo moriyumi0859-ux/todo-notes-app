@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.pyc
+
+# 仮想環境
+.env
+.venv
+venv/
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Data（個人データ）
+data/*.json
+
+# OS
+.DS_Store
