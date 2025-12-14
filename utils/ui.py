@@ -55,32 +55,34 @@ def task_list_view(tasks: List[Dict[str, Any]], *, show_category: bool = False) 
     for t in tasks_sorted:
         cols = st.columns([0.08, 0.62, 0.18, 0.12])
 
-    with cols[1]:
-     title = t.get("title", "")
-    if show_category:
-        cat = t.get("category", "")
-        label = CATEGORY_LABEL.get(cat, cat)
-        title = f"[{label}] {title}"
+        with cols[0]:
+            done = st.checkbox("", value=t.get("done", False), key=f"done_{t['id']}")
 
-# カテゴリ別スタイル適用
-    category = t.get("category")
-    if category == "private":
-       css_class = "task-row task-private"
-    elif category == "work":
-       css_class = "task-row task-work"
-    elif category == "shopping":
-       css_class = "task-row task-shopping"
-    else:
-       css_class = "task-row"
+        with cols[1]:
+            title = t.get("title", "")
+            if show_category:
+                cat = t.get("category", "")
+                label = CATEGORY_LABEL.get(cat, cat)  # CATEGORY_LABEL がある前提
+                title = f"[{label}] {title}"
 
+            category = t.get("category")
+            if category == "private":
+                css_class = "task-row task-private"
+            elif category == "work":
+                css_class = "task-row task-work"
+            elif category == "shopping":
+                css_class = "task-row task-shopping"
+            else:
+                css_class = "task-row"
 
-    st.markdown(
-        f'<div class="{css_class}"><b>{title}</b></div>',
-        unsafe_allow_html=True,
-    )
+            st.markdown(
+                f'<div class="{css_class}"><b>{title}</b></div>',
+                unsafe_allow_html=True,
+            )
 
-    if t.get("notes"):
-        st.caption(t["notes"])
+            if t.get("notes"):
+                st.caption(t["notes"])
+
         with cols[2]:
             d = t.get("due_date") or "—"
             tm = t.get("due_time")
