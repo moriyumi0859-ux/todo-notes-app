@@ -8,8 +8,6 @@ from utils.style import apply_global_styles
 st.set_page_config(page_title="カレンダー", layout="wide")
 
 # 2) homeと同じ背景テーマ
-apply_global_styles(st.session_state.data["settings"]["bg_theme"])
-
 bg_theme = st.session_state.get("data", {}).get("settings", {}).get("bg_theme", "home")
 apply_global_styles(bg_theme)
 
