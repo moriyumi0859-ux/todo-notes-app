@@ -12,6 +12,27 @@ from datetime import datetime
 page_setup()
 st.header("📅 カレンダー（期限日ベース）")
 
+custom_css = """
+/* ▶ カレンダーのタイトル */
+.fc .fc-toolbar-title {
+  font-size: 2.5em;
+  margin: 15px;
+}
+
+/* ▶ カレンダーのボタン */
+.fc .fc-button {
+  border-radius: 0px;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  margin: 8px;
+  text-transform: none;
+}
+"""
+
+calendar(events=events, options=options, custom_css=custom_css, key="todo_calendar")
+
+
 # ▶ 横幅を広く固定（狭くならない対策）
 st.markdown(
     """
