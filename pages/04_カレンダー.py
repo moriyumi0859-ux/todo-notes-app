@@ -2,7 +2,13 @@ import streamlit as st
 import base64
 from pathlib import Path
 
+from utils.style import apply_global_styles
+
+# 1) これが最初＆1回だけ
 st.set_page_config(page_title="カレンダー", layout="wide")
+
+# 2) homeと同じ背景テーマ
+apply_global_styles("home")
 
 def calendar_decorate(image_filename: str):
     root = Path(__file__).resolve().parents[1]
@@ -39,23 +45,23 @@ def calendar_decorate(image_filename: str):
 
 st.title("📅 カレンダー（期限日ベース）")
 
+# カレンダー用の装飾（右上のCanvaパーツ）
 calendar_decorate("bg_calendar.png")
 
-# ここから「表示領域」
+# ここから表示領域
 st.markdown('<div class="calendar-wrap">', unsafe_allow_html=True)
 
 from streamlit_calendar import calendar
 
-events = []
-
-tasks = []  # ← あなたのDB/JSON/セッションから取得したtasksに置き換え
-
+# --- ここは後であなたの実データに置き換え ---
+tasks = []  # 例: load_tasks() など
 events = []
 for t in tasks:
     due = t.get("due_date")
     title = t.get("title")
     if due and title:
         events.append({"title": title, "start": due, "allDay": True})
+# ------------------------------------------
 
 options = {
     "initialView": "dayGridMonth",
