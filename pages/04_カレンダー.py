@@ -104,6 +104,12 @@ custom_css = """
 .fc .fc-toolbar-title {
   margin-top: 20px;
 }
+
+/* 日付セルの白背景を消す */
+.fc .fc-daygrid-day-frame {
+  background: transparent !important;
+}
+
 """
 
 calendar(events=events, options=options, custom_css=custom_css, key="todo_calendar")
