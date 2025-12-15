@@ -100,6 +100,17 @@ options = {
 custom_css = """
 .fc .fc-toolbar-title { font-size: 2.5em; margin: 15px; }
 .fc .fc-button { border-radius: 0px; margin: 8px; }
+
+/* ▶ イベントの白いカードを消す */
+.fc .fc-daygrid-event {
+  background: transparent !important;
+  border: none !important;
+}
+
+/* ▶ イベント内の文字はそのまま */
+.fc .fc-daygrid-event .fc-event-title {
+  white-space: normal;
+}
 """
 
 calendar(events=events, options=options, custom_css=custom_css, key="todo_calendar")
