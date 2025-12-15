@@ -105,6 +105,9 @@ custom_css = """
   margin-top: 20px;
 }
 
+.fc .fc-toolbar.fc-header-toolbar {
+    margin-bottom: 0em;
+}
 
 
 """
