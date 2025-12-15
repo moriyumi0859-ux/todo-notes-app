@@ -11,7 +11,7 @@ st.header("📅 カレンダー（期限日ベース）")
 # -----------------------------
 # 1) tasks → events（期限日があるものだけ）
 # -----------------------------
-ttasks = st.session_state.get("data", {}).get("tasks", [])
+tasks = st.session_state.get("data", {}).get("tasks", [])
 events = []
 
 COLOR_MAP = {
