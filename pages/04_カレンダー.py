@@ -1,23 +1,27 @@
+from utils.ui import page_setup
+from streamlit_calendar import calendar
 import streamlit as st
 import base64
 from pathlib import Path
 
-from utils.ui import page_setup
-from streamlit_calendar import calendar
-
-# -----------------------------
-# 0) 共通レイアウト（背景/カード/サイドバー等）
-# -----------------------------
 page_setup()
+
+# ✅ カレンダーページだけ「中央カードの幅」を広げる（見やすくする）
+st.markdown(
+    """
+    <style>
+    section[data-testid="stMain"] .block-container{
+        max-width: 1400px !important;   /* お好みで 1200〜1600 */
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
 
 st.header("📅 カレンダー（期限日ベース）")
 
-# -----------------------------
-# 1) カレンダー周りのCanva装飾（右上に重ねる）
-#    ※ home背景は page_setup() が担当
-# -----------------------------
 def calendar_decorate(image_filename: str):
-    root = Path(__file__).resolve().parents[1]      # repo root
+    root = Path(__file__).resolve().parents[1]
     img_path = root / "assets" / image_filename
     b64 = base64.b64encode(img_path.read_bytes()).decode()
 
@@ -26,54 +30,40 @@ def calendar_decorate(image_filename: str):
         <style>
         .calendar-wrap {{
             position: relative;
-            padding: 28px;
+            padding: 22px;
             margin-top: 12px;
             border-radius: 22px;
             background-color: rgba(255,255,255,0.88);
+            /* もし枠内にも薄く背景を入れたいなら（任意） */
+            /* background-image: url("data:image/png;base64,{b64}");
+               background-size: contain;
+               background-repeat: no-repeat;
+               background-position: top right; */
         }}
-        .calendar-wrap::after {{
-            content: "";
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            width: 260px;
-            height: 260px;
-            background-image: url("data:image/png;base64,{b64}");
-            background-size: contain;
-            background-repeat: no-repeat;
-            opacity: 0.9;
-            pointer-events: none;
-        }}
+        /* ✅ これが「小さい白いカード＋小さい別カレンダー」の犯人なので削除！ */
         </style>
         """,
         unsafe_allow_html=True,
     )
 
-# Canvaの装飾画像（assets/bg_calendar.png を想定）
 calendar_decorate("bg_calendar.png")
 
-# -----------------------------
-# 2) tasks → events（期限日があるタスクだけ）
-# -----------------------------
+st.markdown('<div class="calendar-wrap">', unsafe_allow_html=True)
+
 tasks = st.session_state.get("data", {}).get("tasks", [])
 events = []
 for t in tasks:
-    due = t.get("due_date")     # 例: "2025-12-20"
+    due = t.get("due_date")
     title = t.get("title")
     if due and title:
-        # 完了タスクを見分けたい場合（doneキーがある想定）
-        prefix = "✅ " if t.get("done") else "📝 "
-        events.append({"title": prefix + title, "start": due, "allDay": True})
+        events.append({"title": title, "start": due, "allDay": True})
 
-# -----------------------------
-# 3) カレンダー表示
-# -----------------------------
 options = {
     "initialView": "dayGridMonth",
     "locale": "ja",
-    "height": 720,
+    "height": 900,   # ✅ 大きく（お好みで 800〜1000）
 }
 
-st.markdown('<div class="calendar-wrap">', unsafe_allow_html=True)
 calendar(events=events, options=options, key="todo_calendar")
+
 st.markdown("</div>", unsafe_allow_html=True)
