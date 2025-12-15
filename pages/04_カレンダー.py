@@ -111,11 +111,18 @@ custom_css = """
 }
 
 /* ===== カレンダーボタン ===== */
-.fc .fc-button {
-  margin: 8px;
-  padding: 6px 14px;
-  border-radius: 12px;   /* ← 角丸 */
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+.fc .fc-button:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 6px 14px rgba(0,0,0,0.18),
+    inset 0 1px 0 rgba(255,255,255,0.95);
+}
+
+.fc .fc-button:active {
+  transform: translateY(1px);
+  box-shadow:
+    0 2px 6px rgba(0,0,0,0.15),
+    inset 0 2px 4px rgba(0,0,0,0.15);
 }
 """
 
