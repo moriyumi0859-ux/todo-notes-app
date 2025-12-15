@@ -98,18 +98,26 @@ options = {
 
 # ▶ カレンダー内部に効かせるCSS（ここ重要）
 custom_css = """
-.fc .fc-toolbar-title { font-size: 2.5em; margin: 15px; }
-.fc .fc-button { border-radius: 0px; margin: 8px; }
-
+/* ===== ヘッダータイトル ===== */
 .fc .fc-toolbar-title {
-  margin-top: 20px;
+  font-size: 2.5em;
+  margin: 15px;
+  margin-top: 20px;   /* タイトルを下に */
 }
 
+/* ヘッダー全体の余白 */
 .fc .fc-toolbar.fc-header-toolbar {
-    margin-bottom: 0em;
+  margin-bottom: 0em;
 }
 
-
+/* ===== カレンダーボタン ===== */
+.fc .fc-button {
+  margin: 8px;
+  padding: 6px 14px;
+  border-radius: 12px;   /* ← 角丸 */
+  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+}
 """
+
 
 calendar(events=events, options=options, custom_css=custom_css, key="todo_calendar")
