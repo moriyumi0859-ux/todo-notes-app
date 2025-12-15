@@ -43,12 +43,17 @@ def apply_global_styles(bg_theme: str) -> None:
     background: transparent !important;
 }}
 
-/* ===== メイン：白い半透明カード ===== */
+/* ===== メイン：白い半透明カード（2段シャドウ） ===== */
 .block-container {{
     background: {SURFACE_RGBA};
     border-radius: {RADIUS_PX}px;
     padding: {CARD_PADDING_PX}px;
-    box-shadow: 0 12px 32px {SHADOW_RGBA};
+
+    /* 🔽 ここが変更点（2段シャドウ） */
+    box-shadow:
+        0 12px 32px rgba(0, 0, 0, 0.18),
+        0 4px 12px rgba(0, 0, 0, 0.10);
+
     backdrop-filter: blur({BLUR_PX}px);
     -webkit-backdrop-filter: blur({BLUR_PX}px);
     border: 1px solid {BORDER_RGBA};
@@ -85,12 +90,12 @@ def apply_global_styles(bg_theme: str) -> None:
     border: 1px solid rgba(33, 150, 243, 0.22);
 }}
 
+/* 買い物（フラット） */
 .task-shopping {{
-    background-color: transparent;   /* 背景なし */
-    border: none;                     /* 枠なし */
-    color: #c62828;                   /* 赤文字だけ */
+    background-color: transparent;
+    border: none;
+    color: #c62828;
 }}
-
 
 </style>
 """,
