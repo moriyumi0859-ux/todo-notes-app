@@ -1,21 +1,18 @@
-import sys
-from pathlib import Path
 import streamlit as st
 import base64
+from pathlib import Path
+import importlib.util
 
-# ★ pages/ の1つ上（リポジトリ直下）を import パスに追加
-ROOT = Path(__file__).resolve().parents[1]
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
+# ===== style.py を「パス指定」で確実に読み込む =====
+ROOT = Path(__file__).resolve().parents[1]                 # /mount/src/todo-notes-app
+STYLE_PATH = ROOT / "utils" / "style.py"
 
-from utils.style import apply_global_styles
+spec = importlib.util.spec_from_file_location("app_style", STYLE_PATH)
+app_style = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(app_style)
 
-# 1) これが最初＆1回だけ
-st.set_page_config(page_title="カレンダー", layout="wide")
+apply_global_styles = app_style.apply_global_styles
 
-# 2) homeと同じ背景テーマ
-bg_theme = st.session_state.get("data", {}).get("settings", {}).get("bg_theme", "home")
-apply_global_styles(bg_theme)
 
 
 
