@@ -98,31 +98,12 @@ options = {
 
 # ▶ カレンダー内部に効かせるCSS（ここ重要）
 custom_css = """
-/* タイトル・ボタン */
 .fc .fc-toolbar-title { font-size: 2.5em; margin: 15px; }
 .fc .fc-button { border-radius: 0px; margin: 8px; }
 
-/* ✅ 白いカード（背景・枠）を消す：月表示のイベント本体 */
-.fc .fc-event,
-.fc .fc-h-event,
-.fc .fc-daygrid-event {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-}
-
-/* ✅ 内側の“白い面”が残る場合に備えて内側も消す */
-.fc .fc-event-main,
-.fc .fc-event-main-frame,
-.fc .fc-event-title-container {
-  background: transparent !important;
-  border: none !important;
-}
-
-/* 文字は折り返し可（必要なら） */
-.fc .fc-event-title {
-  white-space: normal;
+.fc .fc-toolbar-title {
+  margin-top: 20px;
 }
 """
 
-calendar(events=events, options=options, custom_css=custom_css, key="todo_calendar_v2")
+calendar(events=events, options=options, custom_css=custom_css, key="todo_calendar")
