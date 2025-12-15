@@ -1,21 +1,58 @@
 import streamlit as st
-from collections import defaultdict
-from utils.ui import page_setup, task_list_view, reset_task_action_flags, apply_task_actions
+import base64
+from streamlit_calendar import calendar
 
-page_setup()
+# ===== ① Canva背景をこのページだけに適用 =====
+# set_page_configは「最初」に書くのが鉄則
+st.set_page_config(page_title="カレンダー", layout="wide")
 
-st.header("📅 カレンダー（期限日ベース）")
+def set_calendar_bg(filename: str):
+    root = Path(__file__).resolve().parents[1]   # pages/ の1つ上＝リポジトリルート想定
+    img_path = root / "assets" / filename
 
-tasks = [t for t in st.session_state.data["tasks"] if t.get("due_date")]
+    b64 = base64.b64encode(img_path.read_bytes()).decode()
 
-group = defaultdict(list)
-for t in tasks:
-    group[t["due_date"]].append(t)
+    st.markdown(
+        f"""
+        <style>
+        /* Streamlitのバージョン差に強い指定 */
+        [data-testid="stAppViewContainer"] {{
+            background-image: url("data:image/png;base64,{b64}");
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+        }}
 
-reset_task_action_flags()
+        /* 上部バーが背景を隠す場合の対策 */
+        [data-testid="stHeader"] {{
+            background: rgba(0,0,0,0);
+        }}
 
-for due in sorted(group.keys()):
-    st.subheader(due)
-    task_list_view(group[due], show_category=True)
+        /* コンテンツに白い半透明面を敷いて読みやすく */
+        section[data-testid="stMain"] > div {{
+            background: rgba(255,255,255,0.82);
+            border-radius: 16px;
+            padding: 16px;
+        }}
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
 
-apply_task_actions()
+set_calendar_bg("bg_calendar.png")
+
+# ===== ② ここから通常のページ処理 =====
+st.title("📅 カレンダー（期限日ベース）")
+
+events = [
+    {"title": "企画書提出", "start": "2025-12-20", "allDay": True},
+    {"title": "会議資料", "start": "2025-12-18", "allDay": True},
+]
+
+options = {
+    "initialView": "dayGridMonth",
+    "locale": "ja",
+    "height": 700,
+}
+
+calendar(events=events, options=options, key="todo_calendar")
