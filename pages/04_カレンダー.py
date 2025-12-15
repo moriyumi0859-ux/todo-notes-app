@@ -10,6 +10,15 @@ from streamlit_calendar import calendar
 # 共通レイアウト（背景/カード/サイドバー等）
 page_setup()
 
+/* ✅ カレンダーページだけ：外側の白カードを消してスッキリ */
+section[data-testid="stMain"] .block-container{
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  padding: 0 !important;
+  margin-top: 0 !important;
+}
+
 # カレンダーページだけ少し横幅を広く
 st.markdown(
     """
