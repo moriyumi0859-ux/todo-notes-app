@@ -15,9 +15,21 @@ tasks = st.session_state.get("data", {}).get("tasks", [])
 events = []
 
 COLOR_MAP = {
-    "work":     {"color": "#1976d2"},  # 青
-    "private":  {"color": "#2e7d32"},  # 緑
-    "shopping": {"color": "#c62828"},  # 赤
+    "work": {
+        "backgroundColor": "rgba(25, 118, 210, 0.22)",   # 青（仕事）
+        "borderColor": "#1976d2",
+        "textColor": "#0d47a1",
+    },
+    "private": {
+        "backgroundColor": "rgba(46, 125, 50, 0.22)",    # 緑（プライベート）
+        "borderColor": "#2e7d32",
+        "textColor": "#1b5e20",
+    },
+    "shopping": {
+        "backgroundColor": "rgba(198, 40, 40, 0.22)",    # 赤（買い物）
+        "borderColor": "#c62828",
+        "textColor": "#b71c1c",
+    },
 }
 
 LABEL_MAP = {
