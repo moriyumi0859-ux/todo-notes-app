@@ -124,6 +124,12 @@ custom_css = """
     0 2px 6px rgba(0,0,0,0.15),
     inset 0 2px 4px rgba(0,0,0,0.15);
 }
+
+/* ▶ 右側のボタン群を左へ寄せる */
+.fc .fc-toolbar-chunk:last-child {
+  margin-right: 30px;
+}
+
 """
 
 
