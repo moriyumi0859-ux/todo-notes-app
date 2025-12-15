@@ -105,10 +105,7 @@ custom_css = """
   margin-top: 20px;
 }
 
-/* 日付セルの白背景を消す */
-.fc .fc-daygrid-day-frame {
-  background: transparent !important;
-}
+
 
 """
 
