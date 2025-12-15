@@ -29,7 +29,7 @@ events = []  # ← 必ず calendar() より前に定義！
 COLOR_MAP = {
     "work": {"backgroundColor": "rgba(25,118,210,0.22)", "borderColor": "#1976d2", "textColor": "#0d47a1"},
     "private": {"backgroundColor": "rgba(46,125,50,0.22)", "borderColor": "#2e7d32", "textColor": "#1b5e20"},
-    "shopping": {"backgroundColor": "rgba(198,40,40,0.22)", "textColor": "#b71c1c"},
+    "shopping": {"backgroundColor": "rgba(198,40,40,0.22)"},
 }
 LABEL_MAP = {"work": "💼", "private": "🏠", "shopping": "🛒"}
 DEFAULT_STYLE = {"backgroundColor": "rgba(69,90,100,0.22)", "borderColor": "#455a64", "textColor": "#263238"}
