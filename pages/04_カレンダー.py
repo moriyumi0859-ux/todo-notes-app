@@ -125,4 +125,4 @@ custom_css = """
 }
 """
 
-calendar(events=events, options=options, custom_css=custom_css, key="todo_calendar")
+calendar(events=events, options=options, custom_css=custom_css, key="todo_calendar_v2")
