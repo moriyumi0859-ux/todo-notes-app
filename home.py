@@ -23,7 +23,12 @@ themes = list(BG_MAP.keys())
 
 current = st.session_state.data["settings"]["bg_theme"]
 idx = themes.index(current) if current in themes else 0
-theme = st.sidebar.selectbox("背景を選ぶ", themes, index=idx)
+theme = st.sidebar.radio(
+    "背景を選ぶ",
+    themes,
+    index=idx
+)
+
 
 if theme != current:
     st.session_state.data["settings"]["bg_theme"] = theme
