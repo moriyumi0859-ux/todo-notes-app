@@ -97,26 +97,19 @@ options = {
 }
 
 # ▶ カレンダー内部に効かせるCSS（ここ重要）
-
 custom_css = """
-/* ヘッダータイトルを下げる */
-.fc .fc-toolbar {
-  margin-top: 25px;
+.fc .fc-toolbar-title { font-size: 2.5em; margin: 15px; }
+.fc .fc-button { border-radius: 0px; margin: 8px; }
+
+.fc .fc-toolbar-title {
+  margin-top: 20px;
 }
 
-/* 日付マス（白いカード）を透明に */
+/* 日付セルの白背景を消す */
 .fc .fc-daygrid-day-frame {
   background: transparent !important;
 }
 
-/* 枠線も消す場合 */
-.fc .fc-daygrid-day {
-  border: none !important;
-}
-
-/* ボタン・タイトル調整 */
-.fc .fc-toolbar-title { font-size: 2.5em; }
-.fc .fc-button { margin: 8px; }
 """
 
 calendar(events=events, options=options, custom_css=custom_css, key="todo_calendar")
