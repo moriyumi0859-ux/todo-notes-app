@@ -6,22 +6,23 @@ from utils.ui import page_setup
 from streamlit_calendar import calendar
 
 # =========================
-# 0) 共通レイアウト
+# 0) 共通レイアウト（背景/カード/サイドバー等）
 # =========================
 page_setup()
-
-st.toast("🧪 calendar page loaded: a8efc16", icon="✅")
-st.write("commit:", "a8efc16")
 
 st.header("📅 カレンダー（期限日ベース）")
 
 # =========================
-# 1) カレンダーページ専用CSS（白バー対策＋一般的な色）
+# 1) カレンダーページ専用CSS
+#   - 余計な外側カード感を抑える
+#   - カレンダーを不透明な白カードに
+#   - 日曜赤/土曜青、祝日薄赤、今日薄黄
+#   - FullCalendar上部の白い横長バー（toolbar背景）を消す
 # =========================
 st.markdown(
     """
     <style>
-    /* --- Streamlit上部の白いバー対策 --- */
+    /* --- Streamlit上部（白い帯が出る場合の保険）--- */
     [data-testid="stHeader"],
     [data-testid="stToolbar"]{
         background: transparent !important;
@@ -31,31 +32,36 @@ st.markdown(
     }
     [data-testid="stDecoration"]{ display:none !important; }
 
-    /* 本文がヘッダーにめり込まないように */
-    [data-testid="stMainBlockContainer"]{
-        padding-top: 18px !important;
-    }
-
-    /* 外側カードは消して、カレンダーのカードだけを主役に */
+    /* --- このページは少し横幅を広く --- */
     section[data-testid="stMain"] .block-container{
-        background: transparent !important;
-        box-shadow: none !important;
-        border: none !important;
-        padding: 0 0 24px 0 !important;
-        margin-top: 0 !important;
-        max-width: 1400px !important;
+        max-width: 1400px !important;  /* 好みで 1200〜1600 */
     }
 
-    /* カレンダーの白カード（不透明） */
+    /* --- カレンダーの白カード（不透明） --- */
     .calendar-wrap{
-        background: #fff !important;
+        background: #ffffff !important;
         border-radius: 22px;
         padding: 20px 24px 24px 24px !important;
         margin-top: 10px !important;
         box-shadow: 0 14px 40px rgba(0,0,0,0.16);
     }
 
-    /* ===== 一般的なカレンダー：日曜赤・土曜青 ===== */
+    /* ===== FullCalendar上部の“白い横長バー”を消す ===== */
+    .calendar-wrap .fc .fc-header-toolbar,
+    .calendar-wrap .fc .fc-toolbar{
+        background: transparent !important;
+        box-shadow: none !important;
+        border: none !important;
+        padding: 0 !important;
+    }
+    .calendar-wrap .fc .fc-header-toolbar{
+        margin-bottom: 10px !important;  /* 余白だけ残す */
+    }
+    .calendar-wrap .fc .fc-toolbar-title{
+        padding-top: 6px !important;     /* タイトルが切れないように */
+    }
+
+    /* ===== 一般的な日本のカレンダー：日曜赤・土曜青 ===== */
     .fc-col-header-cell.fc-day-sun,
     .fc-col-header-cell.fc-day-sun a{
         color:#e53935 !important;
@@ -79,25 +85,25 @@ st.markdown(
 )
 
 # =========================
-# 2) tasks → events
+# 2) tasks → events（期限日があるタスクのみ）
 # =========================
 tasks = st.session_state.get("data", {}).get("tasks", [])
 events = []
 
 for t in tasks:
-    due = t.get("due_date")
+    due = t.get("due_date")   # "YYYY-MM-DD"
     title = t.get("title")
     if due and title:
         prefix = "✅ " if t.get("done") else ""
         events.append({"title": prefix + title, "start": due, "allDay": True})
 
 # =========================
-# 3) 祝日（薄赤背景）
+# 3) 祝日（薄赤の背景）
 # =========================
 year = dt.date.today().year
-for d, name in jpholiday.year_holidays(year):
+for d, _name in jpholiday.year_holidays(year):
     events.append({
-        "title": name,
+        "title": "holiday",
         "start": d.isoformat(),
         "allDay": True,
         "display": "background",
