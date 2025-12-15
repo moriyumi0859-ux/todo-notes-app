@@ -12,7 +12,6 @@ def calendar_decorate(image_filename: str):
     st.markdown(
         f"""
         <style>
-        /* カレンダーの「外側」を装飾 */
         .calendar-wrap {{
             position: relative;
             padding: 32px;
@@ -20,8 +19,6 @@ def calendar_decorate(image_filename: str):
             border-radius: 22px;
             background-color: rgba(255,255,255,0.88);
         }}
-
-        /* 右上に装飾画像を重ねる */
         .calendar-wrap::after {{
             content: "";
             position: absolute;
@@ -44,14 +41,21 @@ st.title("📅 カレンダー（期限日ベース）")
 
 calendar_decorate("bg_calendar.png")
 
+# ここから「表示領域」
 st.markdown('<div class="calendar-wrap">', unsafe_allow_html=True)
 
 from streamlit_calendar import calendar
 
-events = [
-    {"title": "企画書提出", "start": "2025-12-20", "allDay": True},
-    {"title": "会議資料", "start": "2025-12-18", "allDay": True},
-]
+events = []
+
+tasks = []  # ← あなたのDB/JSON/セッションから取得したtasksに置き換え
+
+events = []
+for t in tasks:
+    due = t.get("due_date")
+    title = t.get("title")
+    if due and title:
+        events.append({"title": title, "start": due, "allDay": True})
 
 options = {
     "initialView": "dayGridMonth",
@@ -61,4 +65,4 @@ options = {
 
 calendar(events=events, options=options, key="todo_calendar")
 
-st.markdown('</div>', unsafe_allow_html=True)
+st.markdown("</div>", unsafe_allow_html=True)
