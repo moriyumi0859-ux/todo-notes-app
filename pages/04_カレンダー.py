@@ -4,31 +4,33 @@ import jpholiday
 
 from utils.ui import page_setup
 from streamlit_calendar import calendar
+from datetime import datetime
 
+# =============================
+# 0) 共通レイアウト
+# =============================
 page_setup()
 st.header("📅 カレンダー（期限日ベース）")
 
-# 横幅固定 + イベント枠線を強制（←ここが重要）
+# ▶ 横幅を広く固定（狭くならない対策）
 st.markdown(
     """
     <style>
     section[data-testid="stMain"] .block-container{
         max-width: 1400px !important;
     }
-    /* ✅ イベントの“囲い（枠線）”を必ず出す */
-    .fc .fc-event{
-        border-style: solid !important;
-        border-width: 2px !important;
-        border-radius: 8px !important;
-    }
     </style>
     """,
     unsafe_allow_html=True,
 )
 
+# =============================
+# 1) tasks → events（カテゴリ色分け）
+# =============================
 tasks = st.session_state.get("data", {}).get("tasks", [])
 events = []
 
+# ▶ すべて「同じ薄さ（0.22）」で統一
 COLOR_MAP = {
     "work": {
         "backgroundColor": "rgba(25,118,210,0.22)",
@@ -47,7 +49,11 @@ COLOR_MAP = {
     },
 }
 
-LABEL_MAP = {"work": "💼", "private": "🏠", "shopping": "🛒"}
+LABEL_MAP = {
+    "work": "💼",
+    "private": "🏠",
+    "shopping": "🛒",
+}
 
 DEFAULT_STYLE = {
     "backgroundColor": "rgba(69,90,100,0.22)",
@@ -57,7 +63,6 @@ DEFAULT_STYLE = {
 
 for t in tasks:
     due = t.get("due_date")
-    due_time = t.get("due_time")  # "HH:MM" or None
     title = t.get("title")
     cat = t.get("category")
 
@@ -67,25 +72,30 @@ for t in tasks:
     style = COLOR_MAP.get(cat, DEFAULT_STYLE)
     icon = LABEL_MAP.get(cat, "📝")
 
-    if due_time:
-        start = f"{due}T{due_time}:00"
-        all_day = False
-    else:
-        start = due
-        all_day = True
-
     events.append({
         "title": f"{icon} {title}",
-        "start": start,
-        "allDay": all_day,
+        "start": due,
+        "allDay": True,
         **style,
     })
 
-# 土日背景
-events.append({"daysOfWeek": [0], "display": "background", "backgroundColor": "rgba(229,57,53,0.18)"})
-events.append({"daysOfWeek": [6], "display": "background", "backgroundColor": "rgba(30,136,229,0.18)"})
+# =============================
+# 2) 土日（背景：少し濃い）
+# =============================
+events.append({
+    "daysOfWeek": [0],  # 日曜
+    "display": "background",
+    "backgroundColor": "rgba(229,57,53,0.18)",
+})
+events.append({
+    "daysOfWeek": [6],  # 土曜
+    "display": "background",
+    "backgroundColor": "rgba(30,136,229,0.18)",
+})
 
-# 祝日背景（今年±1年）
+# =============================
+# 3) 祝日（今年±1年）
+# =============================
 today = dt.date.today()
 for y in [today.year - 1, today.year, today.year + 1]:
     for d, _ in jpholiday.year_holidays(y):
@@ -94,24 +104,21 @@ for y in [today.year - 1, today.year, today.year + 1]:
             "start": d.isoformat(),
             "allDay": True,
             "display": "background",
-            "backgroundColor": "rgba(229,57,53,0.28)",
+            "backgroundColor": "rgba(229,57,53,0.28)",  # 土日より濃く
         })
 
+# =============================
+# 4) カレンダー表示
+# =============================
 options = {
     "initialView": "dayGridMonth",
     "locale": "ja",
     "height": 900,
-    "headerToolbar": {"left": "title", "center": "", "right": "today prev,next"},
+    "headerToolbar": {
+        "left": "title",
+        "center": "",
+        "right": "today prev,next",
+    },
 }
 
-cal = calendar(events=events, options=options, callbacks=["eventClick"], key="todo_calendar")
-
-clicked = (cal or {}).get("eventClick")
-if clicked:
-    ev = clicked.get("event", {})
-    title = ev.get("title", "")
-    start = ev.get("start", "")
-    if isinstance(start, str) and "T" in start:
-        st.info(f"🕒 {title}：{start.split('T', 1)[1][:5]}")
-    else:
-        st.info(f"📌 {title}：終日")
+calendar(events=events, options=options, key="todo_calendar")
