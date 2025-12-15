@@ -11,18 +11,39 @@ st.header("📅 カレンダー（期限日ベース）")
 # -----------------------------
 # 1) tasks → events（期限日があるものだけ）
 # -----------------------------
-tasks = st.session_state.get("data", {}).get("tasks", [])
+ttasks = st.session_state.get("data", {}).get("tasks", [])
 events = []
+
+COLOR_MAP = {
+    "work":     {"color": "#1976d2"},  # 青
+    "private":  {"color": "#2e7d32"},  # 緑
+    "shopping": {"color": "#c62828"},  # 赤
+}
+
+LABEL_MAP = {
+    "work": "💼",
+    "private": "🏠",
+    "shopping": "🛒",
+}
 
 for t in tasks:
     due = t.get("due_date")   # "YYYY-MM-DD"
     title = t.get("title")
-    if due and title:
-        events.append({
-            "title": title,
-            "start": due,
-            "allDay": True,
-        })
+    cat = t.get("category")
+
+    if not (due and title):
+        continue
+
+    # 祝日/土日背景イベントと区別しやすいように「通常イベント」に色を付ける
+    style = COLOR_MAP.get(cat, {"color": "#455a64"})  # 未知カテゴリはグレー
+    icon = LABEL_MAP.get(cat, "📝")
+
+    events.append({
+        "title": f"{icon} {title}",
+        "start": due,
+        "allDay": True,
+        **style,   # ←ここで色が効く
+    })
 
 # -----------------------------
 # 2) 土日（繰り返し背景イベント：見やすく濃く）
@@ -52,7 +73,7 @@ for y in [today.year - 1, today.year, today.year + 1]:
             "display": "background",
             "backgroundColor": "rgba(229,57,53,0.24)",  # ←土日より濃く
         })
-        
+
 # -----------------------------
 # 4) カレンダー表示（サイズ固定）
 # -----------------------------
