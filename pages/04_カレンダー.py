@@ -10,55 +10,70 @@ from streamlit_calendar import calendar
 # =========================
 page_setup()
 
+st.header("📅 カレンダー（期限日ベース）")
+
 # =========================
-# 1) カレンダーページ専用CSS
-#    ・上の細長い白カードを消す
-#    ・横幅を広げる
-#    ・曜日色／今日強調
+# 1) カレンダーページ専用CSS（白バー対策＋一般的な色）
 # =========================
 st.markdown(
     """
     <style>
-    /* =========================
-       1) 横に細長い白いカードの正体（外側カード）を消す
-       ========================= */
+    /* --- Streamlit上部の白いバー対策 --- */
+    [data-testid="stHeader"],
+    [data-testid="stToolbar"]{
+        background: transparent !important;
+        box-shadow: none !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+    }
+    [data-testid="stDecoration"]{ display:none !important; }
+
+    /* 本文がヘッダーにめり込まないように */
     [data-testid="stMainBlockContainer"]{
-        background: transparent !important;
-        box-shadow: none !important;
-        border: none !important;
-        padding-top: 0 !important;
+        padding-top: 18px !important;
     }
 
-    /* page_setup由来のカード（環境によってはこっちが効く） */
-    .block-container{
+    /* 外側カードは消して、カレンダーのカードだけを主役に */
+    section[data-testid="stMain"] .block-container{
         background: transparent !important;
         box-shadow: none !important;
         border: none !important;
-        padding: 0 !important;
+        padding: 0 0 24px 0 !important;
         margin-top: 0 !important;
+        max-width: 1400px !important;
     }
 
-    /* =========================
-       2) カレンダーのカードを「完全な白」にする（不透明）
-       ========================= */
+    /* カレンダーの白カード（不透明） */
     .calendar-wrap{
-        background: #ffffff !important;      /* ← 半透明やめて真っ白 */
+        background: #fff !important;
         border-radius: 22px;
-        padding: 24px;
-        margin-top: 12px;
-        box-shadow: 0 14px 40px rgba(0,0,0,0.16);  /* 影を少し綺麗に */
+        padding: 20px 24px 24px 24px !important;
+        margin-top: 10px !important;
+        box-shadow: 0 14px 40px rgba(0,0,0,0.16);
     }
 
-    /* FullCalendar本体も透けないように（念のため） */
-    .calendar-wrap .fc{
-        background: transparent !important;
+    /* ===== 一般的なカレンダー：日曜赤・土曜青 ===== */
+    .fc-col-header-cell.fc-day-sun,
+    .fc-col-header-cell.fc-day-sun a{
+        color:#e53935 !important;
+        font-weight:700;
+    }
+    .fc-col-header-cell.fc-day-sat,
+    .fc-col-header-cell.fc-day-sat a{
+        color:#1e88e5 !important;
+        font-weight:700;
+    }
+    .fc-daygrid-day.fc-day-sun .fc-daygrid-day-number{ color:#e53935; }
+    .fc-daygrid-day.fc-day-sat .fc-daygrid-day-number{ color:#1e88e5; }
+
+    /* 今日をうっすら強調 */
+    .fc-daygrid-day.fc-day-today{
+        background: rgba(255,193,7,0.12) !important;
     }
     </style>
     """,
     unsafe_allow_html=True,
 )
-
-st.header("📅 カレンダー（期限日ベース）")
 
 # =========================
 # 2) tasks → events
@@ -71,18 +86,12 @@ for t in tasks:
     title = t.get("title")
     if due and title:
         prefix = "✅ " if t.get("done") else ""
-        events.append({
-            "title": prefix + title,
-            "start": due,
-            "allDay": True,
-        })
+        events.append({"title": prefix + title, "start": due, "allDay": True})
 
 # =========================
-# 3) 祝日（日本の一般的な見え方）
+# 3) 祝日（薄赤背景）
 # =========================
-today = dt.date.today()
-year = today.year
-
+year = dt.date.today().year
 for d, name in jpholiday.year_holidays(year):
     events.append({
         "title": name,
@@ -99,6 +108,11 @@ options = {
     "initialView": "dayGridMonth",
     "locale": "ja",
     "height": 900,
+    "headerToolbar": {
+        "left": "title",
+        "center": "",
+        "right": "today prev,next",
+    },
 }
 
 st.markdown('<div class="calendar-wrap">', unsafe_allow_html=True)
