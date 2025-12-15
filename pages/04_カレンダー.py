@@ -1,23 +1,23 @@
 import streamlit as st
 import base64
 from pathlib import Path
-import importlib.util
 
-# ===== style.py を「パス指定」で確実に読み込む =====
-ROOT = Path(__file__).resolve().parents[1]                 # /mount/src/todo-notes-app
-STYLE_PATH = ROOT / "utils" / "style.py"
+from utils.ui import page_setup
+from streamlit_calendar import calendar
 
-spec = importlib.util.spec_from_file_location("app_style", STYLE_PATH)
-app_style = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(app_style)
+# -----------------------------
+# 0) 共通レイアウト（背景/カード/サイドバー等）
+# -----------------------------
+page_setup()
 
-apply_global_styles = app_style.apply_global_styles
+st.header("📅 カレンダー（期限日ベース）")
 
-
-
-
+# -----------------------------
+# 1) カレンダー周りのCanva装飾（右上に重ねる）
+#    ※ home背景は page_setup() が担当
+# -----------------------------
 def calendar_decorate(image_filename: str):
-    root = Path(__file__).resolve().parents[1]
+    root = Path(__file__).resolve().parents[1]      # repo root
     img_path = root / "assets" / image_filename
     b64 = base64.b64encode(img_path.read_bytes()).decode()
 
@@ -26,16 +26,16 @@ def calendar_decorate(image_filename: str):
         <style>
         .calendar-wrap {{
             position: relative;
-            padding: 32px;
-            margin-top: 16px;
+            padding: 28px;
+            margin-top: 12px;
             border-radius: 22px;
             background-color: rgba(255,255,255,0.88);
         }}
         .calendar-wrap::after {{
             content: "";
             position: absolute;
-            top: 12px;
-            right: 12px;
+            top: 10px;
+            right: 10px;
             width: 260px;
             height: 260px;
             background-image: url("data:image/png;base64,{b64}");
@@ -49,32 +49,31 @@ def calendar_decorate(image_filename: str):
         unsafe_allow_html=True,
     )
 
-st.title("📅 カレンダー（期限日ベース）")
-
-# カレンダー用の装飾（右上のCanvaパーツ）
+# Canvaの装飾画像（assets/bg_calendar.png を想定）
 calendar_decorate("bg_calendar.png")
 
-# ここから表示領域
-st.markdown('<div class="calendar-wrap">', unsafe_allow_html=True)
-
-from streamlit_calendar import calendar
-
-# --- ここは後であなたの実データに置き換え ---
-tasks = []  # 例: load_tasks() など
+# -----------------------------
+# 2) tasks → events（期限日があるタスクだけ）
+# -----------------------------
+tasks = st.session_state.get("data", {}).get("tasks", [])
 events = []
 for t in tasks:
-    due = t.get("due_date")
+    due = t.get("due_date")     # 例: "2025-12-20"
     title = t.get("title")
     if due and title:
-        events.append({"title": title, "start": due, "allDay": True})
-# ------------------------------------------
+        # 完了タスクを見分けたい場合（doneキーがある想定）
+        prefix = "✅ " if t.get("done") else "📝 "
+        events.append({"title": prefix + title, "start": due, "allDay": True})
 
+# -----------------------------
+# 3) カレンダー表示
+# -----------------------------
 options = {
     "initialView": "dayGridMonth",
     "locale": "ja",
-    "height": 700,
+    "height": 720,
 }
 
+st.markdown('<div class="calendar-wrap">', unsafe_allow_html=True)
 calendar(events=events, options=options, key="todo_calendar")
-
 st.markdown("</div>", unsafe_allow_html=True)
