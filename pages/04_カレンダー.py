@@ -10,6 +10,9 @@ from streamlit_calendar import calendar
 # =========================
 page_setup()
 
+st.toast("🧪 calendar page loaded: a8efc16", icon="✅")
+st.write("commit:", "a8efc16")
+
 st.header("📅 カレンダー（期限日ベース）")
 
 # =========================
