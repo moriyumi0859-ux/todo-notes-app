@@ -19,48 +19,39 @@ page_setup()
 st.markdown(
     """
     <style>
-    /* --- 外側の細長い白カードを消す --- */
-    section[data-testid="stMain"] .block-container{
+    /* =========================
+       1) 横に細長い白いカードの正体（外側カード）を消す
+       ========================= */
+    [data-testid="stMainBlockContainer"]{
+        background: transparent !important;
+        box-shadow: none !important;
+        border: none !important;
+        padding-top: 0 !important;
+    }
+
+    /* page_setup由来のカード（環境によってはこっちが効く） */
+    .block-container{
         background: transparent !important;
         box-shadow: none !important;
         border: none !important;
         padding: 0 !important;
         margin-top: 0 !important;
-        max-width: 1400px !important;
     }
 
-    /* --- 曜日ヘッダー --- */
-    .fc-col-header-cell.fc-day-sun,
-    .fc-col-header-cell.fc-day-sun a{
-        color: #e53935 !important;
-        font-weight: 700;
-    }
-
-    .fc-col-header-cell.fc-day-sat,
-    .fc-col-header-cell.fc-day-sat a{
-        color: #1e88e5 !important;
-        font-weight: 700;
-    }
-
-    /* --- 日付の数字も色分け --- */
-    .fc-daygrid-day.fc-day-sun .fc-daygrid-day-number{
-        color: #e53935;
-    }
-    .fc-daygrid-day.fc-day-sat .fc-daygrid-day-number{
-        color: #1e88e5;
-    }
-
-    /* --- 今日をうっすら強調 --- */
-    .fc-daygrid-day.fc-day-today{
-        background: rgba(255, 193, 7, 0.12) !important;
-    }
-
-    /* --- カレンダー本体の白カード --- */
+    /* =========================
+       2) カレンダーのカードを「完全な白」にする（不透明）
+       ========================= */
     .calendar-wrap{
-        background: rgba(255,255,255,0.88);
+        background: #ffffff !important;      /* ← 半透明やめて真っ白 */
         border-radius: 22px;
         padding: 24px;
         margin-top: 12px;
+        box-shadow: 0 14px 40px rgba(0,0,0,0.16);  /* 影を少し綺麗に */
+    }
+
+    /* FullCalendar本体も透けないように（念のため） */
+    .calendar-wrap .fc{
+        background: transparent !important;
     }
     </style>
     """,
