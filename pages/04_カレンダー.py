@@ -1,9 +1,9 @@
 import streamlit as st
 import datetime as dt
 import jpholiday
-
 from utils.ui import page_setup
 from streamlit_calendar import calendar
+from datetime import datetime
 
 page_setup()
 st.header("📅 カレンダー（期限日ベース）")
@@ -34,8 +34,11 @@ COLOR_MAP = {
 LABEL_MAP = {"work": "💼", "private": "🏠", "shopping": "🛒"}
 DEFAULT_STYLE = {"backgroundColor": "rgba(69,90,100,0.22)", "borderColor": "#455a64", "textColor": "#263238"}
 
+from datetime import datetime
+
 for t in tasks:
-    due = t.get("due_date")
+    due = t.get("due_date")         # "2025-12-15"
+    due_time = t.get("due_time")    # "14:30" みたいに保存している想定（無ければ None）
     title = t.get("title")
     cat = t.get("category")
     if not (due and title):
@@ -43,7 +46,20 @@ for t in tasks:
 
     style = COLOR_MAP.get(cat, DEFAULT_STYLE)
     icon = LABEL_MAP.get(cat, "📝")
-    events.append({"title": f"{icon} {title}", "start": due, "allDay": True, **style})
+
+    if due_time:
+        start_dt = f"{due}T{due_time}:00"
+        all_day = False
+    else:
+        start_dt = due
+        all_day = True
+
+    events.append({
+        "title": f"{icon} {title}",
+        "start": start_dt,
+        "allDay": all_day,
+        **style,
+    })
 
 # =============================
 # 2) 土日背景
