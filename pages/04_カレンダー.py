@@ -3,10 +3,9 @@ import datetime as dt
 import jpholiday
 from utils.ui import page_setup
 from streamlit_calendar import calendar
-from datetime import datetime
 
 page_setup()
-st.header("📅 カレンダー（期限日ベース）")
+st.header("📅 カレンダー")
 
 # ▶ 横幅（Streamlit本体側）
 st.markdown(
@@ -29,23 +28,18 @@ events = []  # ← 必ず calendar() より前に定義！
 COLOR_MAP = {
     "work": {"backgroundColor": "rgba(25,118,210,0.22)", "borderColor": "#1976d2", "textColor": "#0d47a1"},
     "private": {"backgroundColor": "rgba(46,125,50,0.22)", "borderColor": "#2e7d32", "textColor": "#1b5e20"},
-    "shopping": {
-        "backgroundColor": "transparent",  # ← 背景を消す
-        "borderColor": "transparent",      # ← 枠を消す
-        "textColor": "#b71c1c",            # ← 文字色だけ残す
-    },
+    # shopping は CSS で完全に消すので、ここは最低限でもOK
+    "shopping": {"backgroundColor": "transparent", "borderColor": "transparent", "textColor": "#b71c1c"},
 }
-
 LABEL_MAP = {"work": "💼", "private": "🏠", "shopping": "🛒"}
 DEFAULT_STYLE = {"backgroundColor": "rgba(69,90,100,0.22)", "borderColor": "#455a64", "textColor": "#263238"}
-
-from datetime import datetime
 
 for t in tasks:
     due = t.get("due_date")         # "2025-12-15"
     due_time = t.get("due_time")    # "14:30" みたいに保存している想定（無ければ None）
     title = t.get("title")
     cat = t.get("category")
+
     if not (due and title):
         continue
 
@@ -59,10 +53,14 @@ for t in tasks:
         start_dt = due
         all_day = True
 
+    # ★カテゴリ別にクラス名を付ける（CSSで狙い撃ちできる）
+    class_names = [f"cat-{cat}"] if cat else ["cat-unknown"]
+
     events.append({
         "title": f"{icon} {title}",
         "start": start_dt,
         "allDay": all_day,
+        "classNames": class_names,
         **style,
     })
 
@@ -102,7 +100,7 @@ custom_css = """
 .fc .fc-toolbar-title {
   font-size: 2.5em;
   margin: 15px;
-  margin-top: 20px;   /* タイトルを下に */
+  margin-top: 20px;
 }
 
 /* ヘッダー全体の余白 */
@@ -130,7 +128,72 @@ custom_css = """
   margin-right: 30px;
 }
 
+/* =========================
+   ★ shopping を“文字だけ”にする
+   ========================= */
+
+/* イベント本体（aタグ/ボックス） */
+.fc .cat-shopping.fc-event,
+.fc .cat-shopping .fc-event-main,
+.fc .cat-shopping .fc-event-main-frame {
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+/* dayGrid（月表示）の event 要素は背景が別で入ることがあるので追加で潰す */
+.fc .fc-daygrid-event.cat-shopping {
+  background: transparent !important;
+  border: none !important;
+}
+
+/* 文字だけ残す（色はPython側 textColor でも、ここで強制でもOK） */
+.fc .cat-shopping .fc-event-title,
+.fc .cat-shopping .fc-event-time {
+  color: #b71c1c !important;
+  font-weight: 700;
+}
+
+/* =========================
+   ボタン色を統一する
+   ========================= */
+
+/* 通常状態 */
+.fc .fc-button {
+  background-color: #d32f2f !important; /* ← 好きな赤 */
+  border-color: #d32f2f !important;
+  color: #ffffff !important;
+}
+
+/* hover */
+.fc .fc-button:hover {
+  background-color: #b71c1c !important; /* 少し濃い赤 */
+  border-color: #b71c1c !important;
+}
+
+/* active（押したとき） */
+.fc .fc-button:active {
+  background-color: #8e0000 !important;
+  border-color: #8e0000 !important;
+}
+
+/* today ボタンだけ別色にならないように */
+.fc .fc-button.fc-today-button {
+  background-color: #d32f2f !important;
+  border-color: #d32f2f !important;
+  color: #ffffff !important;
+}
+
+/* 無効状態（today が押せない時） */
+.fc .fc-button:disabled {
+  background-color: #e57373 !important;
+  border-color: #e57373 !important;
+  color: #ffffff !important;
+  opacity: 1 !important;
+}
+
 """
 
-
 calendar(events=events, options=options, custom_css=custom_css, key="todo_calendar")
+
+
