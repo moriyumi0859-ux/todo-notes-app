@@ -75,12 +75,11 @@ today = dt.date.today()
 for y in [today.year - 1, today.year, today.year + 1]:
     for d, _ in jpholiday.year_holidays(y):
         events.append({
-            "title": "祝日",
-            "start": d.isoformat(),
-            "allDay": True,
-            "display": "background",
-            "backgroundColor": "rgba(229,57,53,0.28)",
-        })
+           "start": d.isoformat(),
+           "allDay": True,
+           "display": "background",
+           "backgroundColor": "rgba(229,57,53,0.28)",
+})
 
 # =============================
 # 4) 表示オプション（スマホで崩れにくい設定）
