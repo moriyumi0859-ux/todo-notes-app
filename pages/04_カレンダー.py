@@ -96,7 +96,9 @@ options = {
 
 # ▶ カレンダー内部に効かせるCSS（ここ重要）
 custom_css = """
-/* ===== ヘッダータイトル ===== */
+/* =================================
+   ヘッダータイトル
+   ================================= */
 .fc .fc-toolbar-title {
   font-size: 2.5em;
   margin: 15px;
@@ -108,76 +110,42 @@ custom_css = """
   margin-bottom: 0em;
 }
 
-/* ===== カレンダーボタン ===== */
-.fc .fc-button:hover {
-  transform: translateY(-1px);
-  box-shadow:
-    0 6px 14px rgba(0,0,0,0.18),
-    inset 0 1px 0 rgba(255,255,255,0.95);
-}
+/* =================================
+   カレンダーボタン完全統一
+   ================================= */
 
-.fc .fc-button:active {
-  transform: translateY(1px);
-  box-shadow:
-    0 2px 6px rgba(0,0,0,0.15),
-    inset 0 2px 4px rgba(0,0,0,0.15);
-}
-
-/* ▶ 右側のボタン群を左へ寄せる */
-.fc .fc-toolbar-chunk:last-child {
-  margin-right: 30px;
-}
-
-/* =========================
-   ★ shopping を“文字だけ”にする
-   ========================= */
-
-/* イベント本体（aタグ/ボックス） */
-.fc .cat-shopping.fc-event,
-.fc .cat-shopping .fc-event-main,
-.fc .cat-shopping .fc-event-main-frame {
-  background: transparent !important;
-  border-color: transparent !important;
-  box-shadow: none !important;
-}
-
-/* dayGrid（月表示）の event 要素は背景が別で入ることがあるので追加で潰す */
-.fc .fc-daygrid-event.cat-shopping {
-  background: transparent !important;
-  border: none !important;
-}
-
-/* 文字だけ残す（色はPython側 textColor でも、ここで強制でもOK） */
-.fc .cat-shopping .fc-event-title,
-.fc .cat-shopping .fc-event-time {
-  color: #b71c1c !important;
-  font-weight: 700;
-}
-
-/* =========================
-   ボタン色を統一する
-   ========================= */
-
-/* 通常状態 */
+/* 共通（today / prev / next すべて） */
 .fc .fc-button {
-  background-color: #d32f2f !important; /* ← 好きな赤 */
+  background-color: #d32f2f !important;
   border-color: #d32f2f !important;
   color: #ffffff !important;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.25);
+  transition: all 0.15s ease;
 }
 
 /* hover */
 .fc .fc-button:hover {
-  background-color: #b71c1c !important; /* 少し濃い赤 */
-  border-color: #b71c1c !important;
+  background-color: #c62828 !important;
+  border-color: #c62828 !important;
 }
 
-/* active（押したとき） */
+/* 押している瞬間（分かりやすい） */
 .fc .fc-button:active {
-  background-color: #8e0000 !important;
-  border-color: #8e0000 !important;
+  background-color: #7f0000 !important;
+  border-color: #7f0000 !important;
+  transform: translateY(2px);
+  box-shadow: inset 0 3px 6px rgba(0,0,0,0.35);
 }
 
-/* today ボタンだけ別色にならないように */
+/* 選択中（today / 表示中） */
+.fc .fc-button.fc-button-active,
+.fc .fc-button.fc-today-button.fc-button-active {
+  background-color: #b71c1c !important;
+  border-color: #b71c1c !important;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.25);
+}
+
+/* today ボタン（色ブレ防止） */
 .fc .fc-button.fc-today-button {
   background-color: #d32f2f !important;
   border-color: #d32f2f !important;
@@ -186,12 +154,45 @@ custom_css = """
 
 /* 無効状態（today が押せない時） */
 .fc .fc-button:disabled {
-  background-color: #e57373 !important;
-  border-color: #e57373 !important;
+  background-color: #ef9a9a !important;
+  border-color: #ef9a9a !important;
   color: #ffffff !important;
   opacity: 1 !important;
+  box-shadow: none;
 }
 
+/* =================================
+   shopping を“文字だけ”にする
+   ================================= */
+
+/* イベント本体 */
+.fc .cat-shopping.fc-event,
+.fc .cat-shopping .fc-event-main,
+.fc .cat-shopping .fc-event-main-frame {
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+/* 月表示用の補正 */
+.fc .fc-daygrid-event.cat-shopping {
+  background: transparent !important;
+  border: none !important;
+}
+
+/* 文字色だけ残す */
+.fc .cat-shopping .fc-event-title,
+.fc .cat-shopping .fc-event-time {
+  color: #b71c1c !important;
+  font-weight: 700;
+}
+
+/* =================================
+   右側ボタン位置調整
+   ================================= */
+.fc .fc-toolbar-chunk:last-child {
+  margin-right: 30px;
+}
 """
 
 calendar(events=events, options=options, custom_css=custom_css, key="todo_calendar")
