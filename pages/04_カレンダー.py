@@ -5,7 +5,7 @@ from utils.ui import page_setup
 from streamlit_calendar import calendar
 
 page_setup()
-st.header("📅 カレンダー（期限日ベース）")
+st.header("📅 カレンダー")
 
 # ▶ 横幅（PCは広く / スマホは自動的に狭く見える）
 st.markdown(
@@ -75,7 +75,7 @@ today = dt.date.today()
 for y in [today.year - 1, today.year, today.year + 1]:
     for d, _ in jpholiday.year_holidays(y):
         events.append({
-            "title": "holiday",
+            "title": "祝日",
             "start": d.isoformat(),
             "allDay": True,
             "display": "background",
