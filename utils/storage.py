@@ -57,3 +57,8 @@ def save_data(data: Dict[str, Any], username: str = "default") -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
+
+def user_exists(username: str) -> bool:
+    """ユーザーのデータファイルが既に存在するか確認"""
+    path = get_user_data_path(username)
+    return path.exists()        
