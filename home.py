@@ -24,7 +24,7 @@ if not st.session_state.logged_in:
         </style>
     """, unsafe_allow_html=True)
 
-    st.title("🔐 To Do App")
+    st.title("🔐 To Do App (Spreadsheet Sync)")
     
     tab_login, tab_signup = st.tabs(["ログイン", "新規登録"])
 
@@ -35,16 +35,18 @@ if not st.session_state.logged_in:
             submit = st.form_submit_button("ログイン")
             
             if submit:
-                # 修正点：固定文字 admin123 ではなくスプレッドシートから照合する
-                from utils.storage import verify_user 
-                
-                if user_input.strip() != "" and verify_user(user_input, pw_input):
-                    st.session_state.logged_in = True
-                    st.session_state.username = user_input
-                    st.session_state.data = load_data(user_input)
-                    st.rerun()
-                else:
-                    st.error("ユーザー名またはパスワードが正しくありません")
+                from utils.storage import verify_user, load_data
+                try:
+                    if user_input.strip() != "" and verify_user(user_input, pw_input):
+                        st.session_state.logged_in = True
+                        st.session_state.username = user_input
+                        st.session_state.data = load_data(user_input)
+                        st.rerun()
+                    else:
+                        st.error("ユーザー名またはパスワードが正しくありません")
+                except Exception as e:
+                    st.error(f"ログイン処理中にエラーが発生しました: {e}")
+                    st.exception(e)
 
     with tab_signup:
         with st.form("signup_form"):
@@ -58,23 +60,25 @@ if not st.session_state.logged_in:
                 elif user_exists(new_user):
                     st.error("このユーザー名は既に使われています")
                 else:
-                    # 修正点：パスワードを users シートに登録するために辞書を作成
-                    # DEFAULT_DATA に password を含めて保存するように指示
-                    signup_data = DEFAULT_DATA.copy()
-                    
-                    # save_data 内で users シートにパスワードを書き込めるよう 
-                    # storage.py の仕様に合わせます
-                    from utils.storage import get_sheet
+                    st.info(f"スプレッドシートへの登録を開始します: {new_user}")
                     try:
+                        # 1. 直接 users シートへ書き込み
+                        from utils.storage import get_sheet, save_data, DEFAULT_DATA
                         user_sheet = get_sheet("users")
                         user_sheet.append_row([new_user, new_pw, DEFAULT_BG_THEME])
-                        save_data(signup_data, new_user)
+                        
+                        # 2. 初期データ (tasks, memos) の保存
+                        save_data(DEFAULT_DATA, new_user)
+                        
                         st.success("✅ 登録が完了しました！ログインタブからログインしてください")
+                        st.balloons()
                     except Exception as e:
-                        st.error(f"登録エラー: {e}")
+                        # エラーの正体を画面にすべて吐き出す
+                        st.error("⚠️ 登録中に致命的なエラーが発生しました")
+                        st.error(f"エラー内容: {e}")
+                        st.exception(e) # これで詳細なプログラムエラーが表示されます
 
-    st.stop()# --- 🏠 メイン画面（ログイン後のみ表示） ---
-    
+    st.stop()    
 
 # ログアウトボタン
 if st.sidebar.button("🚪 ログアウト"):
