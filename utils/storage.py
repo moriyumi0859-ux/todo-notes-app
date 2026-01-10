@@ -141,3 +141,17 @@ DEFAULT_DATA: Dict[str, Any] = {
     "memos": [],
     "settings": {"bg_theme": DEFAULT_BG_THEME},
 }
+
+def verify_user(username, password) -> bool:
+    """スプレッドシートの users シートからユーザー名とパスワードを照合する"""
+    try:
+        user_sheet = get_sheet("users")
+        all_users = user_sheet.get_all_records()
+        for u in all_users:
+            # スプレッドシートの列名 username と password に一致するか確認
+            if str(u.get("username")) == username and str(u.get("password")) == password:
+                return True
+        return False
+    except Exception as e:
+        print(f"Auth Error: {e}")
+        return False

@@ -18,7 +18,6 @@ if "logged_in" not in st.session_state:
 
 # --- 🔒 ログインしていない時の処理 ---
 if not st.session_state.logged_in:
-    # サイドバー（メニュー）を非表示にする
     st.markdown("""
         <style>
             [data-testid="stSidebarNav"] {display: none;}
@@ -27,7 +26,6 @@ if not st.session_state.logged_in:
 
     st.title("🔐 To Do App")
     
-    # ログインと新規登録の切り替え
     tab_login, tab_signup = st.tabs(["ログイン", "新規登録"])
 
     with tab_login:
@@ -37,22 +35,21 @@ if not st.session_state.logged_in:
             submit = st.form_submit_button("ログイン")
             
             if submit:
-                # ユーザーが存在し、パスワードが合致するか（現状は admin123 固定）
-                if user_input.strip() != "" and pw_input == "admin123":
-                    if user_exists(user_input):
-                        st.session_state.logged_in = True
-                        st.session_state.username = user_input
-                        st.session_state.data = load_data(user_input)
-                        st.rerun()
-                    else:
-                        st.error("そのユーザー名は登録されていません")
+                # 修正点：固定文字 admin123 ではなくスプレッドシートから照合する
+                from utils.storage import verify_user 
+                
+                if user_input.strip() != "" and verify_user(user_input, pw_input):
+                    st.session_state.logged_in = True
+                    st.session_state.username = user_input
+                    st.session_state.data = load_data(user_input)
+                    st.rerun()
                 else:
-                    st.error("ユーザー名を入力するか、パスワードを確認してください")
+                    st.error("ユーザー名またはパスワードが正しくありません")
 
     with tab_signup:
         with st.form("signup_form"):
             new_user = st.text_input("希望するユーザー名（英数字のみ）")
-            new_pw = st.text_input("設定するパスワード（現在は admin123 のみ有効）", type="password")
+            new_pw = st.text_input("設定するパスワード", type="password")
             signup_submit = st.form_submit_button("新規登録")
             
             if signup_submit:
@@ -60,16 +57,24 @@ if not st.session_state.logged_in:
                     st.error("ユーザー名を入力してください")
                 elif user_exists(new_user):
                     st.error("このユーザー名は既に使われています")
-                elif new_pw != "admin123":
-                    st.error("現在は共通パスワード admin123 のみ登録可能です")
                 else:
-                    # 新規ユーザー用のデータファイルを作成
-                    save_data(DEFAULT_DATA, new_user)
-                    st.success("✅ 登録が完了しました！ログインタブからログインしてください")
+                    # 修正点：パスワードを users シートに登録するために辞書を作成
+                    # DEFAULT_DATA に password を含めて保存するように指示
+                    signup_data = DEFAULT_DATA.copy()
+                    
+                    # save_data 内で users シートにパスワードを書き込めるよう 
+                    # storage.py の仕様に合わせます
+                    from utils.storage import get_sheet
+                    try:
+                        user_sheet = get_sheet("users")
+                        user_sheet.append_row([new_user, new_pw, DEFAULT_BG_THEME])
+                        save_data(signup_data, new_user)
+                        st.success("✅ 登録が完了しました！ログインタブからログインしてください")
+                    except Exception as e:
+                        st.error(f"登録エラー: {e}")
 
-    st.stop() # ログインするまで下のメイン画面は読み込まない
-
-# --- 🏠 メイン画面（ログイン後のみ表示） ---
+    st.stop()# --- 🏠 メイン画面（ログイン後のみ表示） ---
+    
 
 # ログアウトボタン
 if st.sidebar.button("🚪 ログアウト"):
