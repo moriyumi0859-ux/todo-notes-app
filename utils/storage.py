@@ -15,17 +15,21 @@ SPREADSHEET_ID = "1QaBDNoCNOh6EKqGwnUli1OxTXmg7jI4jqfGzCasXrlM"
 # 🔑 スプレッドシート接続関数
 # ==========================================
 def get_gspread_client():
-    """Streamlit Secretsを使用してGoogle Sheets APIに接続（修正版）"""
+    """Streamlit Secretsを使用してGoogle Sheets APIに接続（決定版）"""
     scopes = [
         "https://www.googleapis.com/auth/spreadsheets",
         "https://www.googleapis.com/auth/drive"
     ]
     
-    # Secretsから辞書形式で取得
-    # .to_dict() を使うことで、確実に正しい形式で読み込めます
-    creds_dict = st.secrets["gcp_service_account"]
+    # 【重要】 st.secrets をそのまま使わず、必ず標準の辞書型(dict)に変換する
+    # これにより、ライブラリが「ファイル名」と勘違いするのを防ぎます
+    creds_dict = dict(st.secrets["gcp_service_account"])
     
-    # ここが重要：infoから読み込む（ファイルパスではなく辞書として扱う）
+    # 秘密鍵の改行コード（\n）が文字列として入っている場合の対策
+    if "private_key" in creds_dict:
+        creds_dict["private_key"] = creds_dict["private_key"].replace("\\n", "\n")
+    
+    # from_service_account_info (辞書から読み込む) を使用
     credentials = Credentials.from_service_account_info(creds_dict, scopes=scopes)
     return gspread.authorize(credentials)
 
