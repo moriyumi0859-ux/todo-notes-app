@@ -70,8 +70,10 @@ def load_data(username: str) -> Dict[str, Any]:
             "settings": {"bg_theme": bg_theme}
         }
     except Exception as e:
-        st.error(f"データ読み込みエラー: {e}")
-        return {"tasks": [], "memos": [], "settings": {"bg_theme": DEFAULT_BG_THEME}}
+        # 詳細なエラー内容を画面に表示させる
+        st.error(f"データ保存エラーの詳細: {e}")
+        import traceback
+        st.code(traceback.format_exc()) # エラーの発生箇所も表示
 
 def save_data(data: Dict[str, Any], username: str) -> None:
     """スプレッドシートのデータを更新（差分だけではなく全置換に近い処理）"""
