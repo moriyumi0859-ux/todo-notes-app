@@ -33,13 +33,15 @@ def page_setup() -> None:
     st.markdown(
         """
         <style>
-        /* 画面幅が小さい時（スマホ）のヘッダー調整 */
         @media (max-width: 640px) {
-            .main h1, .main h2 {
-                font-size: 1.5rem !important; /* st.headerはh2としてレンダリングされることが多い */
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
+            /* header(h2)の余白を削り、文字をさらに小さく、折り返しを強制禁止 */
+            .main h2 {
+                font-size: 1.2rem !important; /* 1.5から1.2へ縮小 */
+                white-space: nowrap !important; /* 絶対に改行させない */
+                overflow: hidden !important;
+                text-overflow: clip !important; /* 点々すら出さずにギリギリまで表示 */
+                letter-spacing: -0.05rem; /* 文字間隔を少し詰める */
+                margin-bottom: 1rem !important;
             }
         }
         </style>
