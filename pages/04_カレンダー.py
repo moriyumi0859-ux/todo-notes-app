@@ -5,7 +5,10 @@ from utils.ui import page_setup
 from streamlit_calendar import calendar
 
 page_setup()
-st.header("📅 カレンダー")
+st.markdown(
+    '<h2 style="font-size: 1.4rem; white-space: nowrap; margin-bottom: 1rem;">📅 カレンダー</h2>', 
+    unsafe_allow_html=True
+)
 
 # ▶ 横幅（PCは広く / スマホは自動的に狭く見える）
 st.markdown(

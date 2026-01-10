@@ -8,7 +8,10 @@ from utils.storage import save_data
 page_setup()
 
 CATEGORY = "shopping"
-st.header("🛒 ショッピングリスト")
+st.markdown(
+    '<h2 style="font-size: 1.4rem; white-space: nowrap; margin-bottom: 1rem;">🛒 ショッピングリスト</h2>', 
+    unsafe_allow_html=True
+)
 
 # --- 追加フォーム（チェックボックス無し / メモ無し） ---
 with st.form("add_shopping", clear_on_submit=True):

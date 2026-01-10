@@ -8,7 +8,10 @@ from utils.storage import save_data
 page_setup()
 
 CATEGORY = "work"
-st.header("💼 仕事予定")
+st.markdown(
+    '<h2 style="font-size: 1.4rem; white-space: nowrap; margin-bottom: 1rem;">💼 仕事予定</h2>', 
+    unsafe_allow_html=True
+)
 
 with st.container():
     st.markdown("##### ⚙️ オプション")

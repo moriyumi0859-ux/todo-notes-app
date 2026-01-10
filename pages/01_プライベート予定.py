@@ -8,7 +8,10 @@ from utils.storage import save_data
 page_setup()
 
 CATEGORY = "private"
-st.header("🏠 プライベート予定")
+st.markdown(
+    '<h2 style="font-size: 1.4rem; white-space: nowrap; margin-bottom: 1rem;">🏠 プライベート予定</h2>', 
+    unsafe_allow_html=True
+)
 
 with st.container():
     st.markdown("##### ⚙️ オプション")

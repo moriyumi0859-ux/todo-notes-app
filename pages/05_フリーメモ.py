@@ -5,7 +5,10 @@ from utils.storage import save_data
 
 page_setup()
 
-st.header("📝 フリーメモ")
+st.markdown(
+    '<h2 style="font-size: 1.4rem; white-space: nowrap; margin-bottom: 1rem;">📝 フリーメモ</h2>', 
+    unsafe_allow_html=True
+)
 
 with st.form("add_memo", clear_on_submit=True):
     text = st.text_area("メモを書く")
